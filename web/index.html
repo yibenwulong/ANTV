@@ -1,16 +1,89 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,height=device-height">
+    <title>饼图-花瓣图</title>
+    <style>::-webkit-scrollbar{display:none;}html,body{overflow:hidden;height:100%;margin:0;}</style>
+</head>
+<body>
+<div id="mountNode"></div>
+<script>/*Fixing iframe window.innerHeight 0 issue in Safari*/document.body.clientHeight;</script>
+<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.5.1/dist/g2.min.js"></script>
+<script>
+  var data = [{
+    type: '教育',
+    value: 20
+  }, {
+    type: '餐饮',
+    value: 30
+  }, {
+    type: '医疗',
+    value: 10
+  }, {
+    type: '交通',
+    value: 10
+  }, {
+    type: '娱乐',
+    value: 20
+  }, {
+    type: '其他',
+    value: 10
+  }];
 
-<html>
+  // 根据比例，获取两点之间的点
+  function getPoint(p0, p1, ratio) {
+    return {
+      x: (1 - ratio) * p0.x + ratio * p1.x,
+      y: (1 - ratio) * p0.y + ratio * p1.y
+    };
+  }
 
-  <head>
-    <title>A Minimalist App</title>
-    <script defer src="main.dart.js"></script>
-  </head>
+  var pointRatio = 0.7; // 设置开始变成圆弧的位置 0.7
+  // 可以通过调整这个数值控制分割空白处的间距，0-1 之间的数值
+  var sliceNumber = 0.005;
 
-  <body>
-    <p id="RipVanWinkle">
-      如果你看见这句话，说明Dart没有运行成功。
-    </p>
-  </body>
+  // 自定义 other 的图形，增加两条线
+  G2.Shape.registerShape('interval', 'platelet', {
+    draw: function draw(cfg, container) {
+      cfg.points[1].y = cfg.points[1].y - sliceNumber;
+      cfg.points[2].y = cfg.points[2].y - sliceNumber;
+      var centerPoint = {
+        x: cfg.points[3].x,
+        y: (cfg.points[2].y + cfg.points[3].y) / 2
+      };
+      centerPoint = this.parsePoint(centerPoint);
+      var points = this.parsePoints(cfg.points);
+      var path = [];
+      var tmpPoint1 = getPoint(points[0], points[3], pointRatio);
+      var tmpPoint2 = getPoint(points[1], points[2], pointRatio);
+      path.push(['M', points[0].x, points[0].y]);
+      path.push(['L', tmpPoint1.x, tmpPoint1.y]);
+      path.push(['Q', points[3].x, points[3].y, centerPoint.x, centerPoint.y]);
+      path.push(['Q', points[2].x, points[2].y, tmpPoint2.x, tmpPoint2.y]);
+      path.push(['L', points[1].x, points[1].y]);
+      path.push(['z']);
+      return container.addShape('path', {
+        attrs: {
+          fill: cfg.color,
+          path: path
+        }
+      });
+    }
+  });
 
+  var chart = new G2.Chart({
+    container: 'mountNode',
+    forceFit: true,
+    height: window.innerHeight,
+    padding: [40, 0]
+  });
+
+  chart.source(data);
+  chart.coord('theta');
+  chart.intervalStack().position('value').color('type').shape('platelet').label('type');
+
+  chart.render();
+</script>
+</body>
 </html>
