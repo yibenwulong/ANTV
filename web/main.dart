@@ -6,7 +6,7 @@ import 'dart:js';
 void main(List<String> args) {
   // 取得用于显示dart是否连接成功的div
   final div = querySelector("#hint") as DivElement;
-  div.text = "dart connected.";
+  //div.text = "dart connected.";
 
   // 从js上下文中获取chart类
   var chart = context['chart'];
