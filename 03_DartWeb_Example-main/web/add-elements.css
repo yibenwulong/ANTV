@@ -1,0 +1,25 @@
+body {
+    background-color: blueviolet;
+
+    /* https://www.runoob.com/css/css-margin.html */
+    margin: 15px; 
+    color: cadetblue;
+}
+
+h2 {
+    color: black;
+}
+
+#todo-input {
+
+    /* https://www.w3school.com.cn/cssref/pr_font_font-family.asp */
+    font-family: "Roboto", sans-serif;
+    
+    font-size: 28px;
+
+    /* https://www.runoob.com/css/css-padding.html */
+    padding: 5px 0px 5px 5px;
+
+    /* https://www.runoob.com/css/css-border.html */
+    border: 10px solid orange;
+}
